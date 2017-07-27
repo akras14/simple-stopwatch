@@ -1,13 +1,54 @@
+/* global document, setInterval, clearInterval */
 var startTime = null;
-var secondsInMinute = 60;
-var secondsInHour = 60 * 60;
+const secondsInMinute = 60;
+const secondsInHour = 60 * 60;
+
 var seconds = document.getElementById("seconds");
 var minutes = document.getElementById("minutes");
 var hours = document.getElementById("hours");
+var action = document.getElementById("action");
+var reset = document.getElementById("reset");
+
+action.addEventListener("click", onAction);
+reset.addEventListener("click", onReset);
+
 var interval = null;
 
-var start = document.getElementById("start");
-start.addEventListener("click", startTimer);
+var state = {
+    start: "START",
+    pause: "PAUSE",
+    reset: "RESET"
+}
+
+function onAction(){
+    if(interval){
+        changeState(state.pause);
+    } else {
+        changeState(state.start);
+    }
+}
+
+function onReset(){
+    changeState(state.reset);
+}
+
+function changeState(st){
+    switch (st) {
+        case state.start:
+            startTimer();
+            break;
+        case state.pause:
+            stopTimer();
+            break;
+        case state.reset:
+            stopTimer();
+            resetTime();
+            break;
+        default:
+            throw new Error("Unknown state")
+    }
+    updateActionButton();
+}
 
 function getString(n) {
     if (n < 10) {
@@ -33,7 +74,46 @@ function updateTime() {
     setTime(hours, minutes, seconds);
 }
 
+function getOffset(){
+    var s = Number(seconds.innerText, 10);
+    var m = Number(minutes.innerText, 10);
+    var h = Number(hours.innerText, 10);
+    var offset = h*secondsInHour + m*secondsInMinute + s;
+    var offsetInMs = offset * 1000;
+    return offsetInMs;
+}
+
+function getStartTime() {
+    var offset = getOffset();
+    var now = Date.now();
+    var sTime = now - offset;
+    return sTime;
+}
+
+function resetTime(){
+    seconds.innerHTML = "00";
+    minutes.innerHTML = "00";
+    hours.innerHTML = "00";
+}
+
 function startTimer() {
-    startTime = Date.now();
+    startTime = getStartTime();
     interval = setInterval(updateTime, 100);
+    reset.disabled = true;
+}
+
+function updateActionButton(){
+    if (interval){
+        action.innerText = "Pause";
+    } else if (getOffset() > 0) {
+        action.innerText = "Continue";
+    } else {
+        action.innerText = "Start";
+    }
+}
+
+function stopTimer(){
+    clearInterval(interval);
+    interval = null;
+    reset.disabled = false;
 }

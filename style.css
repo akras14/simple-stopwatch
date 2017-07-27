@@ -1,5 +1,7 @@
 body {
     background-color: rgba(1,1,1,0.75);
+    cursor: default;
+    user-select: none;
 }
 .wrapper {
     position: relative;
@@ -31,6 +33,11 @@ body {
 
 button {
     height: 60px;
-    width: 100px;
+    width: 120px;
     font-size: 30%;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: default;
 }
