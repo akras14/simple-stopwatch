@@ -23,6 +23,10 @@ Note: If you're using Linux Bash for Windows, [see this guide](https://www.howto
 
 https://iconverticons.com/online/
 
+## Bulding the App
+
+`npm run build`
+
 ## Resources for Learning Electron
 
 - [electron.atom.io/docs](http://electron.atom.io/docs) - all of Electron's documentation
